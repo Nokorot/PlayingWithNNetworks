@@ -10,5 +10,5 @@ def main():
 
     network = nn.Network([28*28,16,16,10])
     #print(network.costData(image[0].flatten()))
-    print(network.costData(images.flatten(),labels))
+    print(network.backprop(images[0].flatten(),labels[0]))
 main()

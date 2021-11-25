@@ -1,6 +1,11 @@
 import numpy as np
 import random
 
+def sigmoid(argument):
+    return 1/(1+np.exp(-argument))
+def sigmoidprime(argument):
+    return np.exp(-argument)/(1+np.exp(-argument))**2
+
 class Network:
     def __init__(self, type):
         #type list with number of nodes per layer
@@ -12,7 +17,7 @@ class Network:
     def forward(self, input):
         input = input.reshape(len(input),1)
         for weight,bias in zip(self.weights, self.biases):
-            input = self.sigmoid(weight@input+bias)
+            input = sigmoid(weight@input+bias)
         return input
 
     def costLabel(self, input, label):
@@ -43,14 +48,15 @@ class Network:
             zs.append(input)
             layers.append(sigmoid(input))
 
-        gradw[0] += 2*(layers[-1]-label)*sigmoidprime(zs[-1])@np.transpose(layers[-2])
-        gradb[0] += 2*(layers[-1]-label)*sigmoidprime(zs[-1])
+        multiplier = 2*(layers[-1]-label)*sigmoidprime(zs[-1])
+        gradw[-1] += multiplier@np.transpose(layers[-2])
+        gradb[-1] += multiplier
+
 
         """2(aj-yj)sigmaprime(z)*ak=delwjk=dC/dwjk"""
 
-
-
-    def sigmoid(self, argument):
-        return 1/(1+np.exp(-argument))
-    def sigmoidprime(self, argument):
-        exp(-argument)/(1+np.exp(-argument))**2
+        for i in range(2, self.n_layers):
+            gradb[-i] += (np.transpose(self.weights[-i+1])@multiplier)*sigmoidprime(zs[-i])
+            gradw[-i] += (np.transpose(self.weights[-i+1])@multiplier)*sigmoidprime(zs[-i])@np.transpose(layers[-i-1])
+            multiplier = gradb[-i]
+            print(multiplier.shape)
