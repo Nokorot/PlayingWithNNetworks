@@ -1,6 +1,6 @@
-import numpy
+import numpy as np
 #import matplotlib.pyplot as plt
-import neuralNetwork.py
+import neuralNetwork
 
 def readImg (filename):
     with open(filename, "rb") as f:
@@ -32,4 +32,6 @@ def readLabels (filename):
     numpy.save("labels",labels)
 
 def main():
-    network = Network([28*28,16,16,10])
+    network = neuralNetwork.Network([28*28,16,16,10])
+    print(np.shape(network.weights[0]))
+main()
