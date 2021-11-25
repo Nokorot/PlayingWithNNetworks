@@ -10,21 +10,21 @@ class Network:
         self.weights = [np.random.rand(x,y) for x, y in zip(type[1:], type[:-1])]
 
     def forward(self, input):
-        input = input.reshape(1,len(input))
-        for i in range(self.n_layers-1):
-            for weight,bias in zip(self.weights, self.biases):
-                input = self.sigmoid(weight@input+b)
+        input = input.reshape(len(input),1)
+        for weight,bias in zip(self.weights, self.biases):
+            input = self.sigmoid(weight@input+bias)
         return input
 
     def costLabel(self, input, label):
-        output = forward(input)
-        return np.dot(output-label,output-label)
+        output = self.forward(input)
+        label = np.reshape(len(input),1)
+        return np.dot(np.transpose(output-label),output-label)
 
     #returns average cost given a set of data
     def costData(self, inputs, labels):
         totalCost=0
         for input, label in zip(inputs, labels):
-            totalCost+=costLabel(input, label)
+            totalCost+=self.costLabel(input, label)
         return totalCost/len(inputs)
 
     #backprop for 1 input-label
@@ -43,10 +43,11 @@ class Network:
             zs.append(input)
             layers.append(sigmoid(input))
 
-        gradw[0][j,k] = 2*(layers[-1]-label)*sigmoidprime(zs[-1])@np.transpose(layers[-2])
-        gradb[0] = 2*(layers[-1]-label)*sigmoidprime(zs[-1])
+        gradw[0] += 2*(layers[-1]-label)*sigmoidprime(zs[-1])@np.transpose(layers[-2])
+        gradb[0] += 2*(layers[-1]-label)*sigmoidprime(zs[-1])
 
-            """2(aj-yj)sigmaprime(z)*ak=delwjk=dC/dwjk"""
+        """2(aj-yj)sigmaprime(z)*ak=delwjk=dC/dwjk"""
+
 
 
     def sigmoid(self, argument):
