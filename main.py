@@ -1,5 +1,6 @@
 import numpy
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
+import neuralNetwork.py
 
 def readImg (filename):
     with open(filename, "rb") as f:
@@ -30,41 +31,5 @@ def readLabels (filename):
     labels = numpy.delete(labels, [0,1,2,3,4,5,6,7])
     numpy.save("labels",labels)
 
-def cost(result, label):
-    np.dot(result - label,result-label)
-
-def transformm(vector, weights, biases):
-    x = weights * vector + biases
-    x = 1/(1+np.exp(-x))
-
-#readImg("data/train-images-idx3-ubyte")
-#readLabels("data/train-labels-idx1-ubyte")
-data = numpy.load("images.npy")
-labels = numpy.load("labels.npy")
-
-imgsize=len(data[0].flatten())
-
-weights1 = np.random.rand((16,imgsize))
-weights2 = np.random.rand(16,16)
-weights3 = np.random.rand(10,16)
-biases1 = np.random.rand(16)
-biases2 = np.random.rand(16)
-biases3 = np.random.rand(10)
-
-img = images[0].flatten()
-def adapt(lbl):
-    image = img.flatten()
-    label = numpy.zeros(10)
-    for i in range(0, 10):
-        if labels[0] == i:
-            label[i] = 1
-    return label
-
-def actualCost(img, label):
-    img = transformm(img, weights1, biases1)
-    img = transformm(img, weights2, biases2)
-    img = transformm(img, weights3, biases3)
-    cost = cost(img, label)
-
-#plt.imshow(data[0])
-#plt.show()
+def main():
+    network = Network([28*28,16,16,10])
