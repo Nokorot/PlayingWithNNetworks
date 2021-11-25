@@ -35,7 +35,6 @@ def _read_labels_file(filename):
     for (i,k) in enumerate(data):
         labels[k,i] = 1;
 
-    print(data, labels)
 
     return labels
 
