@@ -12,7 +12,7 @@ class Network:
     def forward(self, input):
         for i in range(self.n_layers-1):
             for weight,bias in zip(self.weights, self.biases):
-                input = sigmoid(weight@input+b)
+                input = self.sigmoid(weight@input+b)
         return input
 
     def costLabel(self, input, label):
@@ -26,9 +26,16 @@ class Network:
             totalCost+=costLabel(input, label)
         return totalCost/len(inputs)
 
-    def backprop(self, inputs, labels):
+    #backprop for 1 input-label
+    def backprop(self, input, label):
+        #list of grads in the for of weights and biases from self:
         gradw = [np.zeros(np.shape(weight)) for weight in self.weights]
         gradb = [np.zeros(np.shape(bias)) for bias in self.biases]
+        #do the forward propagation, saving everything:
+        layers = [input]
+        zs = []
+        for weight, bias in zip(self.weights, self.biases):
+
 
     def sigmoid(self, argument):
         return 1/(1+np.exp(-argument))
