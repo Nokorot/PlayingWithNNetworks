@@ -17,4 +17,6 @@ def main():
     print(network.costLabel(images[0],labels[0]))
     print(network.costData(images,labels))
 
-main()
+
+if __name__ == "__main__":
+    main()
