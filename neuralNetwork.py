@@ -20,7 +20,22 @@ class Network:
         else:
             self.weights = weights
 
-    #def constructor(type,filepath1,filepath2):
+    def loadfromfile(type,filepath1,filepath2):
+        w = []
+        b = []
+        wflat = np.load(filepath1)
+        bflat = np.load(filepath2)
+        wstartpoint = 0
+        bstartpoint = 0
+        for i in range (len(type)-1):
+            wsize = type[i]*type[i+1]
+            w.append(np.reshape(wflat[wstartpoint:wstartpoint+wsize],(type[i+1],type[i])))
+            wstartpoint += wsize
+
+            bsize = type[i+1]
+            b.append(bflat[bstartpoint:bstartpoint+type[i+1]])
+            bstartpoint += bsize
+        return Network(type, w, b )
     #    f1=np.load(filepath1)
     #    f2=np.load(filepath2)
     #    biases = [for i in type[1:]]
@@ -56,15 +71,18 @@ class Network:
         layers = [input]
         zs = []
 
+
         for weight, bias in zip(self.weights, self.biases):
-            input = weight@input + bias
-            zs.append(input)
-            layers.append(sigmoid(input))
+            z = weight@input + bias
+            input = sigmoid(z)
+            zs.append(z)
+            layers.append(input)
 
         multiplier = 2*(layers[-1]-label)*sigmoidprime(zs[-1])
         gradw[-1] += multiplier@np.transpose(layers[-2])
         gradb[-1] += multiplier
 
+        #print(sigmoidprime(zs[-1]),zs[-1])
 
         """2(aj-yj)sigmaprime(z)*ak=delwjk=dC/dwjk"""
 
@@ -74,6 +92,7 @@ class Network:
             multiplier = gradb[-i]
         return gradw, gradb
 
+    #updates w, b based on inputs, labels
     def backpropdata(self, inputs, labels):
         gradw = [np.zeros(np.shape(weight)) for weight in self.weights]
         gradb = [np.zeros(np.shape(bias)) for bias in self.biases]
@@ -81,17 +100,18 @@ class Network:
             for i, (w, b) in enumerate(zip(*self.backprop(input,label))):
                 gradw[i]+=w/len(inputs)
                 gradb[i]+=b/len(inputs)
-        for w, grad in zip(self.weights, gradw):
-            w-=grad
-        for b, grad in zip(self.biases, gradb):
-            b-=grad
+
+        for i, grad in enumerate(gradw):
+            self.weights[i]-=grad
+        for i, grad in enumerate(gradb):
+            self.biases[i]-=grad
 
     def savenetwork(self, path1,path2):
-        np.save(path1, np.array(self.weights).flatten())
-        np.save(path2, np.array(self.biases).flatten())
+        np.save(path1, np.concatenate([w.flatten() for w in self.weights]))
+        np.save(path2, np.concatenate([b.flatten() for b in self.biases]))
 
-    
+
     def loadnetwork(self, path1, path2):
-        pass
 
 
+        return w, b
