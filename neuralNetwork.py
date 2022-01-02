@@ -7,12 +7,25 @@ def sigmoidprime(argument):
     return np.exp(-argument)/(1+np.exp(-argument))**2
 
 class Network:
-    def __init__(self, type):
+    def __init__(self, type, weights = None, biases = None):
         #type list with number of nodes per layer
         self.type = type
         self.n_layers = len(type)
-        self.biases = [np.random.rand(x,1) for x in type[1:]]
-        self.weights = [np.random.rand(x,y) for x, y in zip(type[1:], type[:-1])]
+        if(biases == None):
+            self.biases = [np.random.rand(x,1) for x in type[1:]]
+        else:
+            self.biases = biases
+        if(weights == None):
+            self.weights = [np.random.rand(x,y) for x, y in zip(type[1:], type[:-1])]
+        else:
+            self.weights = weights
+
+    #def constructor(type,filepath1,filepath2):
+    #    f1=np.load(filepath1)
+    #    f2=np.load(filepath2)
+    #    biases = [for i in type[1:]]
+    #    biases.append()
+
 
     def forward(self, input):
         input = input.reshape(len(input),1)
@@ -59,4 +72,20 @@ class Network:
             gradb[-i] += (np.transpose(self.weights[-i+1])@multiplier)*sigmoidprime(zs[-i])
             gradw[-i] += (np.transpose(self.weights[-i+1])@multiplier)*sigmoidprime(zs[-i])@np.transpose(layers[-i-1])
             multiplier = gradb[-i]
-            print(multiplier.shape)
+        return gradw, gradb
+
+    def backpropdata(self, inputs, labels):
+        gradw = [np.zeros(np.shape(weight)) for weight in self.weights]
+        gradb = [np.zeros(np.shape(bias)) for bias in self.biases]
+        for input, label in zip(inputs,labels):
+            for i, (w, b) in enumerate(zip(*self.backprop(input,label))):
+                gradw[i]+=w/len(inputs)
+                gradb[i]+=b/len(inputs)
+        for w, grad in zip(self.weights, gradw):
+            w-=grad
+        for b, grad in zip(self.biases, gradb):
+            b-=grad
+
+    def savenetwork(self, path1,path2):
+        np.save(path1, np.array(self.weights).flatten())
+        np.save(path2, np.array(self.biases).flatten())

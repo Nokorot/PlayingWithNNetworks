@@ -12,7 +12,11 @@ def main():
 
 
     network = nn.Network([28*28,16,16,10])
-    network.backprop(images[0],labels[0])
+    for i in range(0, 12):
+        print(i)
+        network.backpropdata(images[5000*i:5000*(i+1)],labels[5000*i:5000*(i+1)])
+    network.savenetwork("weights.npy","biases.npy")
+
 
 
 if __name__ == "__main__":

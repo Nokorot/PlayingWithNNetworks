@@ -1,5 +1,6 @@
 import numpy as np
 import random
-x = np.arange(5)
-x = np.array([0,0,0,0,0,0,0,0])
-print(x)
+
+x = [np.array([1,2]), np.array([3,4,5])]
+np.save("test.npy",x)
+print(np.load("test.npy"))
