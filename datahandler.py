@@ -8,6 +8,10 @@ TETS_DATA = ["data/t10k-images-idx3-ubyte", "data/t10k-labels-idx1-ubyte"]
 def _read_images_file(filename):
     print(f"Reading image file `{filename}`!")
 
+    if not exists(filename):
+        print(f"File `{filename}` does not exists.\n\trun: './getdata.sh'")
+        sys.exit(1)
+
     with open(filename, "rb") as f:
         data = f.read()
     n_of_imgs = int.from_bytes(data[4:8], "big")

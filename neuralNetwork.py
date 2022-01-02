@@ -89,3 +89,9 @@ class Network:
     def savenetwork(self, path1,path2):
         np.save(path1, np.array(self.weights).flatten())
         np.save(path2, np.array(self.biases).flatten())
+
+    
+    def loadnetwork(self, path1, path2):
+        pass
+
+
