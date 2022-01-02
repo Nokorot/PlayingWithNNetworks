@@ -1,6 +1,4 @@
-images.npy
-labels.npy
 testcode.py
 data
 __pycache__
-biases.npy test.npy weights.npy
+*.npy
